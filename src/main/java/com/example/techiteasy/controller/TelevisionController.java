@@ -1,9 +1,10 @@
 package com.example.techiteasy.controller;
 
+import com.example.techiteasy.dto.TelevisionDto;
 import com.example.techiteasy.exception.RecordNotFoundException;
 import com.example.techiteasy.exception.ToManyCharException;
 import com.example.techiteasy.model.Television;
-import com.example.techiteasy.repository.TelevisionRepository;
+import com.example.techiteasy.service.TelevisionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -16,22 +17,20 @@ import java.util.Optional;
 @RequestMapping("/televisions")
 public class TelevisionController {
 
-    private final TelevisionRepository televisionRepository;
+    private final TelevisionService televisionService;
 
-    public TelevisionController(TelevisionRepository televisionRepository) {
-        this.televisionRepository = televisionRepository;
+    public TelevisionController(TelevisionService televisionService) {
+        this.televisionService = televisionService;
     }
 
     @GetMapping ("/all")
-    public ResponseEntity<List<Television>> getAllTelevisions() {
-        List<Television> televisions = televisionRepository.findAll();
-        if (televisions.isEmpty()) {
-            throw new RecordNotFoundException("No televisions found.");
-        }
-        // Ok code 200
-        return ResponseEntity.ok(televisions);
-    }
+    public ResponseEntity<List<TelevisionDto>> getAllTelevisions() {
 
+        // Ok code 200
+        // Functie getAllTelevisions van Service laag returnen.
+        return ResponseEntity.ok().body(televisionService.getAllTelevisions());
+    }
+/*
     @GetMapping("/{id}")
     public ResponseEntity<Television> getTelevision(@PathVariable Long id) throws RecordNotFoundException {
         Optional<Television> optionalTelevision = televisionRepository.findById(id);
@@ -79,7 +78,7 @@ public class TelevisionController {
         }
         televisionRepository.deleteById(id);
         return ResponseEntity.noContent().build();
-    }
+    }*/
 }
 
 
