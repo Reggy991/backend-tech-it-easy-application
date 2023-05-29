@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -21,11 +22,15 @@ public class TelevisionController {
         this.televisionRepository = televisionRepository;
     }
 
-/*    @GetMapping ("/all")
-    public ResponseEntity<Object> showAllTVs() {
+    @GetMapping ("/all")
+    public ResponseEntity<List<Television>> getAllTelevisions() {
+        List<Television> televisions = televisionRepository.findAll();
+        if (televisions.isEmpty()) {
+            throw new RecordNotFoundException("No televisions found.");
+        }
         // Ok code 200
-        return ResponseEntity.ok("All televisions");
-    }*/
+        return ResponseEntity.ok(televisions);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Television> getTelevision(@PathVariable Long id) throws RecordNotFoundException {
@@ -47,16 +52,34 @@ public class TelevisionController {
         return ResponseEntity.created(location).body(television);
     }
 
-/*    @PutMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     // Normaal gesproken bij @RequestBody voer je hier geen String in maar een datatype.naam (bijv. Television.television).
-    public ResponseEntity<Object> updateTV(@PathVariable int id, @RequestBody String newTelevision) {
-        return ResponseEntity.accepted().body(newTelevision + " " + id);
+    public ResponseEntity<Television> updateTelevision(@PathVariable Long id, @RequestBody Television updatedTelevision) throws RecordNotFoundException {
+        Optional<Television> optionalTelevision = televisionRepository.findById(id);
+        if (optionalTelevision.isEmpty()) {
+            throw new RecordNotFoundException("This television with id " + id + " does not exist.");
+        }
+        Television television = optionalTelevision.get();
+
+        television.setName(updatedTelevision.getName());
+        television.setBrand(updatedTelevision.getBrand());
+        television.setType(updatedTelevision.getType());
+        television.setPrice(updatedTelevision.getPrice());
+        television.setScreenSize(updatedTelevision.getScreenSize());
+
+        Television savedTelevision = televisionRepository.save(television);
+        return ResponseEntity.ok().body(savedTelevision);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Object> deleteTV(@PathVariable int id) {
+    public ResponseEntity<Television> deleteTelevision(@PathVariable Long id) throws RecordNotFoundException {
+        Optional<Television> optionalTelevision = televisionRepository.findById(id);
+        if (optionalTelevision.isEmpty()) {
+            throw new RecordNotFoundException("This television with id " + id + " does not exist.");
+        }
+        televisionRepository.deleteById(id);
         return ResponseEntity.noContent().build();
-    }*/
+    }
 }
 
 
