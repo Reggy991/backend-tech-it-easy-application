@@ -2,11 +2,16 @@ package com.example.techiteasy.dto;
 
 import jakarta.validation.constraints.*;
 
-public class TelevisionDto {
+public class TelevisionInputDto {
+    @NotNull
     private Long id;
+    @Size(max = 20, message = "Name must be between 0-20 characters.")
     private String name;
+    @NotNull(message = "Type is required.")
     private String type;
+    @NotNull(message = "Brand is required.")
     private String brand;
+    @Positive(message = "Price must be higher than zero.")
     private double price;
     private int screenSize;
 
