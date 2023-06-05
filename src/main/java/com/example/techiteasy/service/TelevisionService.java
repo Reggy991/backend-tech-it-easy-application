@@ -39,7 +39,7 @@ public class TelevisionService {
         return televisionDtos;
     }
 
-    public TelevisionDto getTelevision(Long id) {
+    public TelevisionDto getTelevisionById(Long id) {
         Optional<Television> optionalTelevision = televisionRepository.findById(id);
         if (optionalTelevision.isPresent()) {
             Television television = optionalTelevision.get();
