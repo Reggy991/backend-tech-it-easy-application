@@ -2,6 +2,7 @@ package com.example.techiteasy.controller;
 
 import com.example.techiteasy.dto.TelevisionDto;
 import com.example.techiteasy.dto.TelevisionInputDto;
+import com.example.techiteasy.dto.WallbracketInputDto;
 import com.example.techiteasy.exception.RecordNotFoundException;
 import com.example.techiteasy.exception.ToManyCharException;
 import com.example.techiteasy.model.Television;
@@ -44,6 +45,16 @@ public class TelevisionController {
     public ResponseEntity<TelevisionDto> updateTelevision(@PathVariable Long id, @RequestBody TelevisionInputDto updatedTelevision) {
         TelevisionDto dto = televisionService.updateTelevision(id, updatedTelevision);
         return ResponseEntity.ok().body(dto);
+    }
+
+    @PutMapping("/update/{id}/remote/{remote_id}")
+    public ResponseEntity<TelevisionDto> assignRemoteControllerToTelevision(@PathVariable Long id, @PathVariable Long remote_id) {
+        return ResponseEntity.ok(televisionService.assignRemoteControllerToTelevision(id, remote_id));
+    }
+
+    @PutMapping("/update/{id}/wallbracket/{wallbracket_id}")
+    public ResponseEntity<String> assignWallbracketToTelevision(@PathVariable Long id, @PathVariable Long wallbracket_id) {
+        return ResponseEntity.ok(televisionService.assignWallbracketToTelevision(id, wallbracket_id));
     }
 
     @DeleteMapping("/delete/{id}")

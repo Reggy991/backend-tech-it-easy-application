@@ -1,9 +1,10 @@
 package com.example.techiteasy.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "televisions")
@@ -16,6 +17,20 @@ public class Television {
     private String brand;
     private double price;
     private int screenSize;
+    @OneToOne
+    @JsonIgnore
+    private RemoteController remoteController;
+    @OneToMany(mappedBy = "television")
+    private List<CIModule> ciModule;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JsonIgnore
+    @JoinTable(
+            name = "televisions_wallbrackets",
+            joinColumns = @JoinColumn(name = "television_id"),
+            inverseJoinColumns = @JoinColumn(name = "wallbracket_id")
+    )
+    private List<Wallbracket> wallbrackets;
 
     public void setId(Long id) {
         this.id = id;
@@ -63,6 +78,30 @@ public class Television {
 
     public void setScreenSize(int screenSize) {
         this.screenSize = screenSize;
+    }
+
+    public RemoteController getRemoteController() {
+        return remoteController;
+    }
+
+    public void setRemoteController(RemoteController remoteController) {
+        this.remoteController = remoteController;
+    }
+
+    public List<CIModule> getCiModule() {
+        return ciModule;
+    }
+
+    public void setCiModule(List<CIModule> ciModule) {
+        this.ciModule = ciModule;
+    }
+
+    public List<Wallbracket> getWallbrackets() {
+        return wallbrackets;
+    }
+
+    public void setWallbrackets(List<Wallbracket> wallbrackets) {
+        this.wallbrackets = wallbrackets;
     }
 }
 

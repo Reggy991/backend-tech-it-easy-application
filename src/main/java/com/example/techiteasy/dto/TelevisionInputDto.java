@@ -1,6 +1,11 @@
 package com.example.techiteasy.dto;
 
+import com.example.techiteasy.model.CIModule;
+import com.example.techiteasy.model.RemoteController;
+import com.example.techiteasy.model.Wallbracket;
 import jakarta.validation.constraints.*;
+
+import java.util.List;
 
 public class TelevisionInputDto {
     @NotNull
@@ -14,6 +19,9 @@ public class TelevisionInputDto {
     @Positive(message = "Price must be higher than zero.")
     private double price;
     private int screenSize;
+    private RemoteController remoteController;
+    private List<CIModule> ciModule;
+    private List<Wallbracket> wallbrackets;
 
     public Long getId() {
         return id;
@@ -61,5 +69,29 @@ public class TelevisionInputDto {
 
     public void setScreenSize(int screenSize) {
         this.screenSize = screenSize;
+    }
+
+    public RemoteController getRemoteController() {
+        return remoteController;
+    }
+
+    public void setRemoteController(RemoteController remoteController) {
+        this.remoteController = remoteController;
+    }
+
+    public List<CIModule> getCiModule() {
+        return ciModule;
+    }
+
+    public void setCiModule(List<CIModule> ciModule) {
+        this.ciModule = ciModule;
+    }
+
+    public List<Wallbracket> getWallbrackets() {
+        return wallbrackets;
+    }
+
+    public void setWallbrackets(List<Wallbracket> wallbrackets) {
+        this.wallbrackets = wallbrackets;
     }
 }
