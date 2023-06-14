@@ -3,15 +3,15 @@ package com.example.techiteasy.service;
 import com.example.techiteasy.dto.TelevisionDto;
 import com.example.techiteasy.dto.TelevisionInputDto;
 import com.example.techiteasy.exception.RecordNotFoundException;
-import com.example.techiteasy.exception.ToManyCharException;
+import com.example.techiteasy.model.RemoteController;
 import com.example.techiteasy.model.Television;
+import com.example.techiteasy.model.Wallbracket;
+import com.example.techiteasy.repository.RemoteControllerRepository;
 import com.example.techiteasy.repository.TelevisionRepository;
-import org.springframework.http.ResponseEntity;
+import com.example.techiteasy.repository.WallbracketRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.PathVariable;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,10 +21,14 @@ import java.util.Optional;
 @Service
 public class TelevisionService {
     private final TelevisionRepository televisionRepository;
+    private final RemoteControllerRepository remoteControllerRepository;
+    private final WallbracketRepository wallbracketRepository;
 
     // Al een constructor geschreven dus @Autowired is niet meer nodig.
-    public TelevisionService(TelevisionRepository televisionRepository) {
+    public TelevisionService(TelevisionRepository televisionRepository, RemoteControllerRepository remoteControllerRepository, WallbracketRepository wallbracketRepository) {
         this.televisionRepository = televisionRepository;
+        this.remoteControllerRepository = remoteControllerRepository;
+        this.wallbracketRepository = wallbracketRepository;
     }
 
     public List<TelevisionDto> getAllTelevisions() {
@@ -74,7 +78,39 @@ public class TelevisionService {
         }
     }
 
-    public void deleteTelevision(@RequestBody Long id) {
+    public TelevisionDto assignRemoteControllerToTelevision(Long id, Long remote_id) {
+        Optional<Television> optionalTelevision = televisionRepository.findById(id);
+        Optional<RemoteController> optionalRemoteController = remoteControllerRepository.findById(remote_id);
+        if (optionalTelevision.isEmpty() || optionalRemoteController.isEmpty()) {
+            throw new RecordNotFoundException("This television and/or remote controller with id " + id + " " + remote_id + " does not exist.");
+        }
+        Television television1 = optionalTelevision.get();
+        RemoteController remoteController1 = optionalRemoteController.get();
+
+        television1.setRemoteController(remoteController1);
+        Television returnTelevision = televisionRepository.save(television1);
+
+        return transferTelevisionToDto(returnTelevision);
+    }
+
+    public String assignWallbracketToTelevision(Long id, Long wallbracket_id) {
+        Optional<Television> optionalTelevision = televisionRepository.findById(id);
+        Optional<Wallbracket> optionalWallbracket = wallbracketRepository.findById(wallbracket_id);
+        if (optionalTelevision.isEmpty() && optionalWallbracket.isEmpty()) {
+            throw new RecordNotFoundException("This television and/or wallbracket with id " + id + " " + wallbracket_id + " does not exist.");
+        }
+        Television television1 = optionalTelevision.get();
+        Wallbracket wallbracket1 = optionalWallbracket.get();
+
+        List<Wallbracket> wallbrackets = television1.getWallbrackets();
+        wallbrackets.add(wallbracket1);
+        television1.setWallbrackets(wallbrackets);
+        televisionRepository.save(television1);
+
+        return "De koppeling is gelukt!";
+    }
+
+    public void deleteTelevision(@PathVariable Long id) {
         televisionRepository.deleteById(id);
     }
 
@@ -88,6 +124,8 @@ public class TelevisionService {
         televisionDto.setType(television.getType());
         televisionDto.setPrice(television.getPrice());
         televisionDto.setScreenSize(television.getScreenSize());
+        televisionDto.setRemoteController(television.getRemoteController());
+        televisionDto.setCiModule(television.getCiModule());
 
         return televisionDto;
 
@@ -99,7 +137,9 @@ public class TelevisionService {
         television.setBrand(televisionInputDto.getBrand());
         television.setType(televisionInputDto.getType());
         television.setPrice(televisionInputDto.getPrice());
-        television.setScreenSize(television.getScreenSize());
+        television.setScreenSize(televisionInputDto.getScreenSize());
+        television.setRemoteController(televisionInputDto.getRemoteController());
+        television.setCiModule(televisionInputDto.getCiModule());
 
         return television;
     }
